@@ -266,6 +266,19 @@ namespace EFCachingProvider
                     this.transaction.AddAffectedEntitySet(entitySet);
                 }
             }
+			else if (this.Connection.Enlistment != null)
+			{
+				if (this.Definition.IsModification)
+				{
+					this.Connection.Enlistment.HasModifications = true;
+				}
+
+				foreach (EntitySetBase entitySet in this.Definition.AffectedEntitySets)
+				{
+					this.Connection.Enlistment.AddAffectedEntitySet(entitySet);
+				}
+			}
+
         }
     }
 }

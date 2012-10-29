@@ -270,7 +270,7 @@ namespace EFProviderWrapperToolkit
         /// </returns>
         protected override DbCommand CreateDbCommand()
         {
-            throw new NotSupportedException();
+        	return wrappedConnection.CreateCommand();
         }
 
         /// <summary>

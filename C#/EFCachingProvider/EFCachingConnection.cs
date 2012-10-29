@@ -2,6 +2,7 @@
 
 using System.Data;
 using System.Data.Common;
+using System.Transactions;
 using EFCachingProvider.Caching;
 using EFProviderWrapperToolkit;
 
@@ -71,9 +72,21 @@ namespace EFCachingProvider
         /// <returns>
         /// An object representing the new transaction.
         /// </returns>
-        protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel)
+        protected override DbTransaction BeginDbTransaction(System.Data.IsolationLevel isolationLevel)
         {
             return new EFCachingTransaction(WrappedConnection.BeginTransaction(isolationLevel), this);
         }
+
+		internal EFCachingEnlistment Enlistment { get; set; }
+
+		public override void Open()
+		{
+			base.Open();
+			if (System.Transactions.Transaction.Current != null)
+			{
+				this.Enlistment = new EFCachingEnlistment { Cache = this.Cache, HasModifications = false };
+				System.Transactions.Transaction.Current.EnlistVolatile(this.Enlistment, EnlistmentOptions.None);
+			}
+		}
     }
 }

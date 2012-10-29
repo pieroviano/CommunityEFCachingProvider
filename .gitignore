@@ -1,11 +1,45 @@
-# Build and Object Folders
-bin/
-obj/
 
-#User Specific Files
+#ignore thumbnails created by windows
+Thumbs.db
+#Ignore files build by Visual Studio
+*.obj
+*.exe
+*.pdb
 *.user
+*.aps
+*.pch
+*.vspscc
+*_i.c
+*_p.c
+*.ncb
 *.suo
-
-#Resource Caches
-_ReSharper.*
-*.sln.cache
+*.tlb
+*.tlh
+*.bak
+*.cache
+*.ilk
+*.log
+[Bb]in
+[Dd]ebug*/
+*.lib
+*.sbr
+obj/
+[Rr]elease*/
+_ReSharper*/
+[Tt]est[Rr]esult*
+*.svn
+*.dbmdl
+*.vsmdi
+packages
+/sys$command
+/Aaco.Operations/Aaco.Operations.Web.FrontendTests/tools/testdb_schema.sql
+/Aaco.Operations/Aaco.Operations.Web/Logs
+*.ncrunch*
+/Aaco.Operations/Aaco.Operations.Web/ReportCache
+/Aaco.Operations/Aaco.Operations.Database.AspNetDb/Sandbox/Aaco_Operations_Database.ldf
+/Aaco.Operations/Aaco.Operations.Database.AspNetDb/Sandbox/Aaco_Operations_Database.mdf
+*.orig
+.sass-cache/
+Aaco.Operations/_TeamCity.Aaco.Operations/
+*.dotCover
+InitialFeedlotStockData*.xls
