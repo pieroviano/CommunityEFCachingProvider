@@ -26,7 +26,6 @@
           </Configuration>
         </DataCollector>
         <DataCollector uri="datacollector://Microsoft/AspNetProfiler/10.0" assemblyQualifiedName="Microsoft.VisualStudio.PerformanceTools.DataCollection.AspNetProfileDataCollector, Microsoft.VisualStudio.PerformanceTools.DataCollection, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" enabled="false">
-          <Configuration useAgentDefault="true" />
         </DataCollector>
       </DataCollectors>
     </AgentRule>

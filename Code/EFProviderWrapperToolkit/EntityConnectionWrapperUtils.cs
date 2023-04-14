@@ -29,35 +29,43 @@ namespace EFProviderWrapperToolkit
         /// <summary>
         /// Creates the entity connection with wrappers.
         /// </summary>
-        /// <param name="entityConnectionString">The original entity connection string.</param>
+        /// <param name="entityConnectionStringName">The original entity connection string.</param>
         /// <param name="wrapperProviders">List for wrapper providers.</param>
         /// <returns>EntityConnection object which is based on a chain of providers.</returns>
-        public static EntityConnection CreateEntityConnectionWithWrappers(string entityConnectionString, params string[] wrapperProviders)
+        public static EntityConnection CreateEntityConnectionWithWrappersFromName(string entityConnectionStringName, params string[] wrapperProviders)
         {
-            EntityConnectionStringBuilder ecsb = new EntityConnectionStringBuilder(entityConnectionString);
+            EntityConnectionStringBuilder entityConnectionStringBuilder = new EntityConnectionStringBuilder(entityConnectionStringName);
 
             // if connection string is name=EntryName, look up entry in the config file and parse it
-            if (!String.IsNullOrEmpty(ecsb.Name))
+            if (!String.IsNullOrEmpty(entityConnectionStringBuilder.Name))
             {
-                var connStr = System.Configuration.ConfigurationManager.ConnectionStrings[ecsb.Name];
+                var connStr = System.Configuration.ConfigurationManager.ConnectionStrings[entityConnectionStringBuilder.Name];
                 if (connStr == null)
                 {
-                    throw new ArgumentException("Specified named connection string '" + ecsb.Name + "' was not found in the configuration file.");
+                    throw new ArgumentException("Specified named connection string '" + entityConnectionStringBuilder.Name + "' was not found in the configuration file.");
                 }
 
-                ecsb.ConnectionString = connStr.ConnectionString;
+                entityConnectionStringBuilder.ConnectionString = connStr.ConnectionString;
             }
 
+            return EntityConnectionWithWrappersFromEntityConnectionString(entityConnectionStringBuilder, wrapperProviders);
+        }
+
+        public static EntityConnection EntityConnectionWithWrappersFromEntityConnectionString(
+            EntityConnectionStringBuilder entityConnectionStringBuilder, params string[] wrapperProviders)
+        {
+            var connectionString = entityConnectionStringBuilder.ConnectionString;
             MetadataWorkspace workspace;
-            if (!metadataWorkspaceMemoizer.TryGetValue(ecsb.ConnectionString, out workspace))
+            if (!metadataWorkspaceMemoizer.TryGetValue(connectionString, out workspace))
             {
-                workspace = CreateWrappedMetadataWorkspace(ecsb.Metadata, wrapperProviders);
-                metadataWorkspaceMemoizer.Add(ecsb.ConnectionString, workspace);
+                workspace = CreateWrappedMetadataWorkspace(entityConnectionStringBuilder.Metadata, wrapperProviders);
+                metadataWorkspaceMemoizer.Add(connectionString, workspace);
             }
 
-            var storeConnection = DbProviderFactories.GetFactory(ecsb.Provider).CreateConnection();
-            storeConnection.ConnectionString = ecsb.ProviderConnectionString;
-            var newEntityConnection = new EntityConnection(workspace, DbConnectionWrapper.WrapConnection(storeConnection, wrapperProviders));
+            var storeConnection = DbProviderFactories.GetFactory(entityConnectionStringBuilder.Provider).CreateConnection();
+            storeConnection.ConnectionString = entityConnectionStringBuilder.ProviderConnectionString;
+            var newEntityConnection =
+                new EntityConnection(workspace, DbConnectionWrapper.WrapConnection(storeConnection, wrapperProviders));
             return newEntityConnection;
         }
 
@@ -103,13 +111,15 @@ namespace EFProviderWrapperToolkit
                 if (translatedComponent.StartsWith("~", StringComparison.Ordinal))
                 {
                     var httpContextType = Type.GetType(httpContextTypeName, true);
-                    dynamic context = (dynamic)httpContextType.GetProperty("Current").GetValue(null, null);
+                    object context = httpContextType.GetProperty("Current").GetValue(null, null);
                     if (context == null)
                     {
                         throw new NotSupportedException("Paths prefixed with '~' are not supported outside of ASP.NET.");
                     }
 
-                    translatedComponent = context.Server.MapPath(translatedComponent);
+                    var server = httpContextType.GetProperty("Server").GetValue(context, new object[0]);
+                    
+                    translatedComponent = (string) server.GetType().GetMethod("MapPath", new[] { typeof(string) }).Invoke(server, new object[] { translatedComponent });
                 }
 
                 if (translatedComponent.StartsWith("res://", StringComparison.Ordinal))

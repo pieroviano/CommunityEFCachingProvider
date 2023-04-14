@@ -60,7 +60,10 @@ namespace EFProviderWrapperToolkit
 
             var data = (DataSet)ConfigurationManager.GetSection("system.data");
             var providerFactories = data.Tables["DbProviderFactories"];
-            providerFactories.Rows.Add(name, name, invariantName, factoryType.AssemblyQualifiedName);
+            if (providerFactories.Select($"InvariantName='{invariantName}'").Length == 0)
+            {
+                providerFactories.Rows.Add(name, name, invariantName, factoryType.AssemblyQualifiedName);
+            }
         }
 
         /// <summary>

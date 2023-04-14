@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
+using System.Data.EntityClient;
 using System.IO;
 using System.Linq;
 using EFProviderWrapperToolkit;
@@ -33,26 +34,29 @@ namespace EFProviderWrapperDemo
     {
         static void Main(string[] args)
         {
-            EFTracingProviderConfiguration.RegisterProvider();
+#if CACHING
             EFCachingProviderConfiguration.RegisterProvider();
-
-            // tracing + caching demos
+            // caching demos
             SimpleCachingDemo();
             CacheInvalidationDemo();
             NonDeterministicQueryCachingDemo();
-
+#else
+            EFTracingProviderConfiguration.RegisterProvider();
             // tracing demos
             SimpleTracingDemo();
             AdvancedTracingDemo();
+#endif
         }
 
+#if NET40
         private static void DdlMethodsDemo()
         {
-            using (var context = new ExtendedNorthwindEntities())
+            using (var context = new TracingHelper<NorthwindEntities>().CreateDbContextForTracing("name=NorthwindEntities"))
             {
                 Console.WriteLine(context.CreateDatabaseScript());
             }
         }
+#endif
 
         /// <summary>
         /// In this demo we are running a set of queries 3 times and logging SQL commands to the console.
@@ -64,19 +68,17 @@ namespace EFProviderWrapperDemo
             ICache cache = new InMemoryCache();
             CachingPolicy cachingPolicy = CachingPolicy.CacheAll;
 
-            // log SQL from all connections to the console
-            EFTracingProviderConfiguration.LogToConsole = true;
-
             for (int i = 0; i < 3; ++i)
             {
                 Console.WriteLine();
                 Console.WriteLine("*** Pass #{0}...", i);
                 Console.WriteLine();
-                using (var context = new ExtendedNorthwindEntities())
+                var cachingHelper = new CachingHelper<NorthwindEntities>();
+                using (var context = cachingHelper.CreateDbContextForCaching("name=NorthwindEntities"))
                 {
                     // set up caching
-                    context.Cache = cache;
-                    context.CachingPolicy = cachingPolicy;
+                    cachingHelper.Cache = cache;
+                    cachingHelper.CachingPolicy = cachingPolicy;
 
                     Console.WriteLine("Loading customer...");
                     var cust = context.Customers.First(c => c.CustomerID == "ALFKI");
@@ -107,19 +109,17 @@ namespace EFProviderWrapperDemo
         {
             var cache = new InMemoryCache();
 
-            // log SQL from all connections to the console
-            EFTracingProviderConfiguration.LogToConsole = true;
-
             for (int i = 0; i < 3; ++i)
             {
                 Console.WriteLine();
                 Console.WriteLine("*** Pass #{0}...", i);
                 Console.WriteLine();
-                using (var context = new ExtendedNorthwindEntities())
+                var cachingHelper = new CachingHelper<NorthwindEntities>();
+                using (var context = cachingHelper.CreateDbContextForCaching("name=NorthwindEntities"))
                 {
                     // set up caching
-                    context.Cache = cache;
-                    context.CachingPolicy = CachingPolicy.CacheAll;
+                    cachingHelper.Cache = cache;
+                    cachingHelper.CachingPolicy = CachingPolicy.CacheAll;
 
                     Console.WriteLine("Loading customer...");
                     var cust = context.Customers.First(c => c.CustomerID == "ALFKI");
@@ -161,11 +161,12 @@ namespace EFProviderWrapperDemo
                 Console.WriteLine();
                 Console.WriteLine("*** Pass #{0}...", i);
                 Console.WriteLine();
-                using (var context = new ExtendedNorthwindEntities())
+                var cachingHelper = new CachingHelper<NorthwindEntities>();
+                using (var context = cachingHelper.CreateDbContextForCaching("name=NorthwindEntities"))
                 {
                     // set up caching
-                    context.Cache = cache;
-                    context.CachingPolicy = CachingPolicy.CacheAll;
+                    cachingHelper.Cache = cache;
+                    cachingHelper.CachingPolicy = CachingPolicy.CacheAll;
 
                     Console.WriteLine("Loading orders...");
                     context.Orders.Where(c => c.ShippedDate < DateTime.Now).ToList();
@@ -193,9 +194,10 @@ namespace EFProviderWrapperDemo
 
             using (TextWriter logFile = File.CreateText("sqllogfile.txt"))
             {
-                using (var context = new ExtendedNorthwindEntities())
+                var extendedNorthwindEntities = new TracingHelper<NorthwindEntities>();
+                using (var context = extendedNorthwindEntities.CreateDbContextForTracing("name=NorthwindEntities"))
                 {
-                    context.Log = logFile;
+                    extendedNorthwindEntities.Log = logFile;
 
                     // this will produce LIKE 'ALFKI%' T-SQL
                     var customer = context.Customers.Single(c => c.CustomerID.StartsWith("ALFKI"));
@@ -232,14 +234,15 @@ namespace EFProviderWrapperDemo
             // disable global logging to console
             EFTracingProviderConfiguration.LogToConsole = false;
 
-            using (var context = new ExtendedNorthwindEntities())
+            var extendedNorthwindEntities = new TracingHelper<NorthwindEntities>();
+            using (var context = extendedNorthwindEntities.CreateDbContextForTracing("name=NorthwindEntities"))
             {
-                context.CommandExecuting += (sender, e) =>
+                extendedNorthwindEntities.CommandExecuting += (sender, e) =>
                     {
                         Console.WriteLine("Command is executing: {0}", e.ToTraceString());
                     };
 
-                context.CommandFinished += (sender, e) =>
+                extendedNorthwindEntities.CommandFinished += (sender, e) =>
                     {
                         Console.WriteLine("Command has finished: {0}", e.ToTraceString());
                     };

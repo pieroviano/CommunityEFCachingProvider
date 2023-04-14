@@ -125,6 +125,7 @@ namespace EFProviderWrapperToolkit
             return "DbProviderManifestWrapper(Wrapped=" + this.wrappedProviderManifest + ")";
         }
 
+#if !NET35
         /// <summary>
         /// Indicates if the provider supports escaping strings to be used as patterns in a Like expression.
         /// </summary>
@@ -148,6 +149,7 @@ namespace EFProviderWrapperToolkit
         {
             return this.wrappedProviderManifest.EscapeLikeArgument(argument);
         }
+#endif
 
         /// <summary>
         /// Returns an XML reader that represents the storage provider-specific information.

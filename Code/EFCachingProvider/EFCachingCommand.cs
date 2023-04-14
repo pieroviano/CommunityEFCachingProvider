@@ -116,7 +116,15 @@ namespace EFCachingProvider
         /// </returns>
         private new EFCachingConnection Connection
         {
-            get { return (EFCachingConnection)base.Connection; }
+            get
+            {
+                DbConnectionWrapper efCachingConnection = (DbConnectionWrapper) base.Connection;
+                while (!(efCachingConnection is EFCachingConnection))
+                {
+                    efCachingConnection = (DbConnectionWrapper) efCachingConnection.WrappedConnection;
+                }
+                return (EFCachingConnection)efCachingConnection;
+            }
         }
 
         private new EFCachingCommandDefinition Definition

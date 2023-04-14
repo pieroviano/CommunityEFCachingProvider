@@ -125,11 +125,15 @@ namespace EFProviderWrapperToolkit
 
             set
             {
-                DbConnectionWrapper conn = (DbConnectionWrapper)value;
+                DbConnection conn = value;
                 if (conn != null)
                 {
                     this.connection = conn;
-                    this.wrappedCommand.Connection = conn.WrappedConnection;
+                    while (conn is DbConnectionWrapper)
+                    {
+                        conn = ((DbConnectionWrapper) conn).WrappedConnection;
+                    }
+                    this.wrappedCommand.Connection = conn;
                 }
                 else
                 {

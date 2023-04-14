@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Common.CommandTrees;
 using System.Data.Metadata.Edm;
+using System.Reflection;
 
 namespace EFProviderWrapperToolkit
 {
@@ -37,8 +38,8 @@ namespace EFProviderWrapperToolkit
         public virtual DbCommandDefinitionWrapper CreateCommandDefinitionWrapper(DbCommandDefinition wrappedCommandDefinition, DbCommandTree commandTree)
         {
             return new DbCommandDefinitionWrapper(
-                wrappedCommandDefinition, 
-                commandTree, 
+                wrappedCommandDefinition,
+                commandTree,
                 (cmd, def) => new DbCommandWrapper(cmd, def));
         }
 
@@ -129,6 +130,7 @@ namespace EFProviderWrapperToolkit
             return this.CreateCommandDefinitionWrapper(definition, commandTree);
         }
 
+#if !NET35
         /// <summary>
         /// Creates a database indicated by connection and creates schema objects (tables, primary keys, foreign keys) based on the contents of a <see cref="T:System.Data.Metadata.Edm.StoreItemCollection"/>.
         /// </summary>
@@ -213,6 +215,8 @@ namespace EFProviderWrapperToolkit
             return services.CreateDatabaseScript(realToken, storeItemCollection);
         }
 
+#endif
+
         /// <summary>
         /// Gets provider services object given provider invariant name.
         /// </summary>
@@ -244,15 +248,38 @@ namespace EFProviderWrapperToolkit
         private Func<DbProviderManifest, DbCommandTree, DbCommandDefinition> GetCreateDbCommandDefinitionFunction(string providerInvariantName)
         {
             Func<DbProviderManifest, DbCommandTree, DbCommandDefinition> result;
-
             lock (this.createDbCommandDefinitionFunctions)
             {
-                if (!this.createDbCommandDefinitionFunctions.TryGetValue(providerInvariantName, out result))
+                if (!this.createDbCommandDefinitionFunctions.ContainsKey(providerInvariantName))
                 {
                     DbProviderServices ps = GetProviderServicesByName(providerInvariantName);
-                    this.createDbCommandDefinitionFunctions[providerInvariantName] = ps.CreateCommandDefinition;
+                    DbCommandDefinition Value(DbProviderManifest a, DbCommandTree b)
+                    {
+                        DbProviderManifestWrapper w=null;
+                        if (a is DbProviderManifestWrapper)
+                        {
+                            ps = GetProviderServicesByName(((EFProviderWrapperToolkit.DbProviderManifestWrapper) a)
+                               .WrappedProviderManifestInvariantName);
+                            w = (DbProviderManifestWrapper) a;
+                        }
+#if NET35
+                        var methodInfo = ps.GetType().GetMethod("CreateDbCommandDefinition", BindingFlags.Instance | BindingFlags.NonPublic,
+                            Type.DefaultBinder,
+                            new[] {typeof(DbProviderManifest), typeof(DbCommandTree) },
+                            null);
+                        return (DbCommandDefinition)methodInfo.Invoke(ps, new object[]{w?.WrappedProviderManifest??a, b});
+#else
+                        return ps.CreateCommandDefinition(a, b);
+#endif
+                    }
 
-                    result = ps.CreateCommandDefinition;
+                    this.createDbCommandDefinitionFunctions.Add(providerInvariantName, Value);
+
+                    result = Value;
+                }
+                else
+                {
+                    result = createDbCommandDefinitionFunctions[providerInvariantName];
                 }
             }
 

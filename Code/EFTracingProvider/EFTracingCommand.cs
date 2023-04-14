@@ -43,7 +43,15 @@ namespace EFTracingProvider
         /// </returns>
         private new EFTracingConnection Connection
         {
-            get { return (EFTracingConnection)base.Connection; }
+            get
+            {
+                DbConnectionWrapper efCachingConnection = (DbConnectionWrapper)base.Connection;
+                while (!(efCachingConnection is EFTracingConnection))
+                {
+                    efCachingConnection = (DbConnectionWrapper)efCachingConnection.WrappedConnection;
+                }
+                return (EFTracingConnection)efCachingConnection;
+            }
         }
 
         /// <summary>

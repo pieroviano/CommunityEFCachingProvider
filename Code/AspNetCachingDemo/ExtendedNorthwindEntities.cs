@@ -12,12 +12,12 @@ namespace AspNetCachingDemo
         private TextWriter logOutput;
 
         public ExtendedNorthwindEntities()
-            : this("name=NorthwindEFEntities")
+            : this("name=NorthwindEntities")
         {
         }
 
         public ExtendedNorthwindEntities(string connectionString)
-            : base(EntityConnectionWrapperUtils.CreateEntityConnectionWithWrappers(
+            : base(EntityConnectionWrapperUtils.CreateEntityConnectionWithWrappersFromName(
                     connectionString,
                     "EFTracingProvider",
                     "EFCachingProvider"

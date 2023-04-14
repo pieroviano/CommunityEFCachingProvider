@@ -43,3 +43,4 @@ packages
 Aaco.Operations/_TeamCity.Aaco.Operations/
 *.dotCover
 InitialFeedlotStockData*.xls
+.vs
