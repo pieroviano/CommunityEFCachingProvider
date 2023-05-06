@@ -20,7 +20,7 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <Company>Microsoft Corporation</Company>
     <Authors>Microsoft Corporation</Authors>
-    <PackageId>EFProviderWrapperToolkit.PieroViano</PackageId>
+    <PackageId>Net4x.$(AssemblyName)</PackageId>
   </PropertyGroup>
   <Import Project="..\Common.targets" />
   <ItemGroup>
@@ -38,7 +38,6 @@
     <CodeAnalysisDictionary Include="CustomDictionary.xml" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Net4x.AsyncBridge" Version="$(Net4xAsyncBridgeVersion).$(VersionBuildSuffix)" />
     <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" PrivateAssets="All" />
   </ItemGroup>
 </Project>

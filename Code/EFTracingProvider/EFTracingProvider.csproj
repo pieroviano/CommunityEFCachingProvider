@@ -19,7 +19,7 @@
     <Copyright>Copyright (c) Microsoft Corporation</Copyright>
     <Company>Microsoft Corporation</Company>
     <Authors>Microsoft Corporation</Authors>
-    <PackageId>EFTracingProvider.PieroViano</PackageId>
+    <PackageId>Net4x.$(AssemblyName)</PackageId>
   </PropertyGroup>
   <Import Project="..\Common.targets" />
   <ItemGroup>
@@ -36,7 +36,6 @@
     <ProjectReference Include="..\EFProviderWrapperToolkit\EFProviderWrapperToolkit.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Net4x.AsyncBridge" Version="$(Net4xAsyncBridgeVersion).$(VersionBuildSuffix)" />
     <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
