@@ -24,6 +24,10 @@
   </PropertyGroup>
   <Import Project="..\Common.targets" />
   <ItemGroup>
+    <Content Include="Net4x.$(MSBuildProjectName).props" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).props')" />
+    <Content Include="Net4x.$(MSBuildProjectName).targets" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'">
     <Reference Include="System.configuration" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Transactions" />

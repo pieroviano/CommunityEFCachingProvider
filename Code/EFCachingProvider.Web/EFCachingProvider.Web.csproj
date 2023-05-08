@@ -20,12 +20,17 @@
     <PackageId>Net4x.$(AssemblyName)</PackageId>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Net4x.$(MSBuildProjectName).props" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).props')" />
+    <Content Include="Net4x.$(MSBuildProjectName).targets" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'">
     <Reference Include="System.Web" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj" />
+    <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj">
+      <PrivateAssets>all</PrivateAssets>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" PrivateAssets="All" />

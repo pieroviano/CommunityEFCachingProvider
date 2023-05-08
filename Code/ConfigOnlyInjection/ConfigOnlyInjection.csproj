@@ -20,6 +20,10 @@
     <PackageId>Net4x.$(AssemblyName)</PackageId>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Net4x.$(MSBuildProjectName).props" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).props')" />
+    <Content Include="Net4x.$(MSBuildProjectName).targets" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'">
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
