@@ -8,6 +8,5 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" PrivateAssets="All" />
-    <PackageReference Include="Net4x.EFProviderWrapperToolkit" Version="$(EFProviderWrappersVersion).$(VersionBuildSuffix)" />
   </ItemGroup>
 </Project>

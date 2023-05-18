@@ -1,6 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
-  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageOutputPath>$(SolutionDir)Packages\</PackageOutputPath>
   </PropertyGroup>
@@ -16,9 +14,11 @@
     <Copyright>Copyright © Microsoft 2010</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <EFProviderWrappersVersion Condition="'$(EFProviderWrappersVersion)' == ''">1.0.9</EFProviderWrappersVersion>
-    <Version>$(EFProviderWrappersVersion)$(Suffix)</Version>
+    <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <PackageId>Net4x.$(AssemblyName)</PackageId>
   </PropertyGroup>
+  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
+  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
   <ItemGroup>
     <Content Include="Net4x.$(MSBuildProjectName).props" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).props')" />
     <Content Include="Net4x.$(MSBuildProjectName).targets" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" />
@@ -28,11 +28,9 @@
     <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj">
-      <PrivateAssets>all</PrivateAssets>
-    </ProjectReference>
+    <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" PrivateAssets="All" />
+    <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" />
   </ItemGroup>
 </Project>

@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Import Project = "$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
-  <Import Project = "$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
+  <PropertyGroup>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+  </PropertyGroup>
+<PropertyGroup><Version>$(VersionPrefix).$(VersionSuffix)</Version></PropertyGroup>
   <PropertyGroup>
     <PackageOutputPath>$(SolutionDir)Packages\</PackageOutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <TargetFrameworks>net35;net40</TargetFrameworks>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <IncludeSymbols Condition="'$(Configuration)'=='Debug'">true</IncludeSymbols>
     <SymbolPackageFormat Condition="'$(Configuration)'=='Debug'">snupkg</SymbolPackageFormat>
     <IncludeSymbols Condition="'$(Configuration)'!='Debug'">false</IncludeSymbols>
@@ -22,6 +23,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
+  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
+  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
   <Import Project="..\Common.targets" />
   <ItemGroup>
     <PackageReference Include="Net4x.MsTests" Version="$(Net4xMsTestsVersion).$(VersionBuildSuffix)" />

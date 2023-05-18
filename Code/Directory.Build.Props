@@ -1,0 +1,8 @@
+<Project>
+  <Import Project="Directory.NuGet.props" Condition="'$(DirectoryNuGet)'==''" />
+  <PropertyGroup>
+    <VersionPrefix>$(EFProviderWrappersVersion)</VersionPrefix>
+    <VersionSuffix Condition="'$(Configuration)'!='Release'">0-at20230518035435</VersionSuffix>
+    <VersionSuffix Condition="'$(Configuration)'=='Release'">0</VersionSuffix>
+  </PropertyGroup>
+</Project>
