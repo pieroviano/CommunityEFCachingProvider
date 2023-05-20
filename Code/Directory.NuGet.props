@@ -98,5 +98,9 @@
     <Xsd2DbVersion>1.1.0</Xsd2DbVersion>
     <iTextCoreVersion>1.1.0</iTextCoreVersion>
     <PdfRepresentationVersion>1.1.0</PdfRepresentationVersion>
+    <StarbVersion>23.5.0</StarbVersion>
+    <NuGetUtilityVersion>2.0.10</NuGetUtilityVersion>
+    <DocumentoUnicoVersion>1.0.0</DocumentoUnicoVersion>
+    <SystemDataDataSetExtensionsVersion>4.5.0</SystemDataDataSetExtensionsVersion>
   </PropertyGroup>
 </Project>
