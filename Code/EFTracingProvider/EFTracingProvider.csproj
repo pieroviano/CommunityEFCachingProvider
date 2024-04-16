@@ -1,45 +1,46 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <PackageOutputPath>$(SolutionDir)Packages\</PackageOutputPath>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <EFProviderWrappersVersion Condition="'$(EFProviderWrappersVersion)' == ''">1.0.9</EFProviderWrappersVersion>
-    <Version>$(VersionPrefix).$(VersionSuffix)</Version>
-    <TargetFrameworks>net35;net40</TargetFrameworks>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <IncludeSymbols Condition="'$(Configuration)'=='Debug'">true</IncludeSymbols>
-    <SymbolPackageFormat Condition="'$(Configuration)'=='Debug'">snupkg</SymbolPackageFormat>
-    <IncludeSymbols Condition="'$(Configuration)'!='Debug'">false</IncludeSymbols>
-    <AssemblyTitle>EFTracingProvider</AssemblyTitle>
-    <Product>EFTracingProvider</Product>
-    <Copyright>Copyright (c) Microsoft Corporation</Copyright>
-    <Company>Microsoft Corporation</Company>
-    <Authors>Microsoft Corporation</Authors>
-    <PackageId>Net4x.$(AssemblyName)</PackageId>
-  </PropertyGroup>
-  <Import Project="$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
-  <Import Project="$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
-  <Import Project="..\Common.targets" />
-  <ItemGroup>
-    <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Net4x.$(MSBuildProjectName).props" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).props')" />
-    <Content Include="Net4x.$(MSBuildProjectName).targets" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'">
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Data.Entity" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Data.DataSetExtensions" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="EFTracingCommand.cs" />
-    <Compile Update="EFTracingConnection.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\EFProviderWrapperToolkit\EFProviderWrapperToolkit.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <CodeAnalysisDictionary Include="CustomDictionary.xml" />
-  </ItemGroup>
+<?xml version="1.0" encoding="utf-16"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <PackageOutputPath>$(SolutionDir)Packages\</PackageOutputPath>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <EFProviderWrappersVersion Condition="'$(EFProviderWrappersVersion)' == ''">1.0.9</EFProviderWrappersVersion>
+        <Version>$(VersionPrefix).$(VersionSuffix)</Version>
+        <TargetFrameworks>net35;net40</TargetFrameworks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <IncludeSymbols Condition="'$(Configuration)'=='Debug'">true</IncludeSymbols>
+        <SymbolPackageFormat Condition="'$(Configuration)'=='Debug'">snupkg</SymbolPackageFormat>
+        <IncludeSymbols Condition="'$(Configuration)'!='Debug'">false</IncludeSymbols>
+        <AssemblyTitle>EFTracingProvider</AssemblyTitle>
+        <Product>EFTracingProvider</Product>
+        <Copyright>Copyright (c) Microsoft Corporation</Copyright>
+        <Company>Microsoft Corporation</Company>
+        <Authors>Microsoft Corporation</Authors>
+        <PackageId>Net4x.$(AssemblyName)</PackageId>
+    </PropertyGroup>
+    <Import Project="$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
+    <Import Project="$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
+    <Import Project="..\Common.targets" />
+    <ItemGroup>
+        <PackageReference Include="NuGetUtility" Version="$(NuGetUtilityVersion)" PrivateAssets="All" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="Net4x.$(MSBuildProjectName).props" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).props')" />
+        <Content Include="Net4x.$(MSBuildProjectName).targets" Pack="True" PackagePath="build\" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="System.configuration" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
+        <Reference Include="System.Data.Entity" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
+        <Reference Include="System.Transactions" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
+        <Reference Include="System.Data.DataSetExtensions" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Update="EFTracingCommand.cs" />
+        <Compile Update="EFTracingConnection.cs" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\EFProviderWrapperToolkit\EFProviderWrapperToolkit.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <CodeAnalysisDictionary Include="CustomDictionary.xml" />
+    </ItemGroup>
 </Project>

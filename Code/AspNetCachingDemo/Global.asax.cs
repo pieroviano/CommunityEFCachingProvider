@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using EFCachingProvider;
 using EFCachingProvider.Caching;
 using EFCachingProvider.Web;

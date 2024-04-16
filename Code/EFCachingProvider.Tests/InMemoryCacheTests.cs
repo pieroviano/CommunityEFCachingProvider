@@ -1,18 +1,18 @@
-﻿// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using EFCachingProvider.Caching;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace EFCachingProvider.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class InMemoryCacheTests
     {
-        [TestMethod]
+        [Test]
         public void InMemoryCacheInitialStatisticsAreAllZero()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -22,7 +22,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual(0, cache.CacheMisses);
         }
 
-        [TestMethod]
+        [Test]
         public void InMemoryCacheCacheMissTests()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -36,7 +36,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual(0, cache.CacheItemAdds);
         }
 
-        [TestMethod]
+        [Test]
         public void InMemoryCacheCacheHitTests()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -51,7 +51,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual(1, cache.CacheItemAdds);
         }
 
-        [TestMethod]
+        [Test]
         public void InMemoryCacheCacheReplaceTests()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -69,7 +69,7 @@ namespace EFCachingProvider.Tests
         }
 
 
-        [TestMethod]
+        [Test]
         public void InMemoryCacheCacheExpirationTest1()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -94,7 +94,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual(1, cache.CacheItemInvalidations);
         }
 
-        [TestMethod]
+        [Test]
         public void InMemoryCacheCacheExpirationTest2()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -130,7 +130,7 @@ namespace EFCachingProvider.Tests
             Assert.IsNull(cache.LruChainTail);
         }
 
-        [TestMethod]
+        [Test]
         public void InMemoryCacheCacheExpirationTest3()
         {
             InMemoryCache cache = new InMemoryCache();
@@ -154,7 +154,7 @@ namespace EFCachingProvider.Tests
 
         }
 
-        [TestMethod]
+        [Test]
         public void LruTest1()
         {
             InMemoryCache imc = new InMemoryCache();
@@ -188,7 +188,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual("", GetItemKeysInLruOrder(imc));
         }
 
-        [TestMethod]
+        [Test]
         public void LruWithLimitTest2()
         {
             InMemoryCache imc = new InMemoryCache(3);
@@ -207,7 +207,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual("F|E|D", GetItemKeysInLruOrder(imc));
         }
 
-        [TestMethod]
+        [Test]
         public void DependenciesTest()
         {
             InMemoryCache imc = new InMemoryCache();
@@ -223,7 +223,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual("D|A", GetItemKeysInLruOrder(imc));
         }
 
-        [TestMethod]
+        [Test]
         public void DependenciesTest2()
         {
             InMemoryCache imc = new InMemoryCache();
@@ -239,7 +239,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual("C", GetItemKeysInLruOrder(imc));
         }
 
-        [TestMethod]
+        [Test]
         public void DependenciesTest3()
         {
             InMemoryCache imc = new InMemoryCache();
@@ -255,7 +255,7 @@ namespace EFCachingProvider.Tests
             Assert.AreEqual("D|C|B|A", GetItemKeysInLruOrder(imc));
         }
 
-        [TestMethod]
+        [Test]
         public void DependenciesTest4()
         {
             InMemoryCache imc = new InMemoryCache();
@@ -274,7 +274,7 @@ namespace EFCachingProvider.Tests
 
         }
 
-        [TestMethod]
+        [Test]
         public void MicroStressTest()
         {
             // run a bunch of concurrent reads and writes, make sure we get no exceptions

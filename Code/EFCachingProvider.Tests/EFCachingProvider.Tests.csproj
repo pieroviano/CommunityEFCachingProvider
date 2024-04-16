@@ -27,7 +27,7 @@
   <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
   <Import Project="..\Common.targets" />
   <ItemGroup>
-    <PackageReference Include="Net4x.MsTests" Version="$(Net4xMsTestsVersion).$(VersionBuildSuffix)" />
+    <PackageReference Include="Net4x.NunitTests" Version="$(Net4xMsTestsVersion).$(VersionBuildSuffix)" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj" />
