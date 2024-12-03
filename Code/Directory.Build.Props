@@ -3,7 +3,7 @@
   <PropertyGroup>
     <VersionPrefix>$(EFProviderWrappersVersion)</VersionPrefix>
     <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
-    <VersionSuffix Condition="'$(Configuration)'!='Release'">1-at20230518035435</VersionSuffix>
-    <VersionSuffix Condition="'$(Configuration)'=='Release'">1</VersionSuffix>
+    <VersionSuffix Condition="'$(Configuration)'!='Release'">0-at20230518035435</VersionSuffix>
+    <VersionSuffix Condition="'$(Configuration)'=='Release'">0</VersionSuffix>
   </PropertyGroup>
 </Project>
