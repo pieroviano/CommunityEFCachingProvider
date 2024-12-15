@@ -16,11 +16,11 @@
         <Authors>Microsoft Corporation</Authors>
         <PackageId>Net4x.$(AssemblyName)</PackageId>
     </PropertyGroup>
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
+    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
+    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
     <Import Project="..\Common.targets" />
     <ItemGroup>
-        <PackageReference Include="NuGetUtility" PrivateAssets="All" Version="$(NuGetUtilityVersion)" />
+        <PackageReference Include="Net4x.NuGetUtility" PrivateAssets="All" Version="$(NuGetUtilityVersion)" />
     </ItemGroup>
     <ItemGroup>
         <Content Include="Net4x.$(MSBuildProjectName).props" Condition="Exists('Net4x.$(MSBuildProjectName).props')" Pack="True" PackagePath="build\" />

@@ -45,6 +45,6 @@
         </None>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="NuGetUtility" PrivateAssets="All" Version="$(NuGetUtilityVersion)" />
+        <PackageReference Include="Net4x.NuGetUtility" PrivateAssets="All" Version="$(NuGetUtilityVersion)" />
     </ItemGroup>
 </Project>
