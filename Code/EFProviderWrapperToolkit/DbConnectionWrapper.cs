@@ -91,6 +91,12 @@ namespace EFProviderWrapperToolkit
         {
             get
             {
+                // Like any new DbConnection, a wrapper with nothing to wrap yet has an empty connection string.
+                if (this.wrappedConnection == null)
+                {
+                    return string.Empty;
+                }
+
                 return connectionStringKey + this.wrappedProviderInvariantName + ";" + this.wrappedConnection.ConnectionString;
             }
 
@@ -134,7 +140,7 @@ namespace EFProviderWrapperToolkit
         /// </returns>
         public override ConnectionState State
         {
-            get { return this.wrappedConnection.State; }
+            get { return this.wrappedConnection != null ? this.wrappedConnection.State : ConnectionState.Closed; }
         }
 
         /// <summary>
@@ -220,9 +226,10 @@ namespace EFProviderWrapperToolkit
         /// Wraps the connection.
         /// </summary>
         /// <param name="connection">The connection.</param>
+        /// <param name="providerInvariantName">The invariant name of the provider <paramref name="connection"/> belongs to.</param>
         /// <param name="wrapperProviderInvariantNames">The wrapper provider invariant names.</param>
         /// <returns>Wrapped connection.</returns>
-        internal static DbConnection WrapConnection(DbConnection connection, params string[] wrapperProviderInvariantNames)
+        internal static DbConnection WrapConnection(DbConnection connection, string providerInvariantName, params string[] wrapperProviderInvariantNames)
         {
             foreach (string invariantName in wrapperProviderInvariantNames)
             {
@@ -230,7 +237,12 @@ namespace EFProviderWrapperToolkit
                 var connectionWrapper = factory.CreateConnection();
                 DbConnectionWrapper wrapper = (DbConnectionWrapper)connectionWrapper;
                 wrapper.WrappedConnection = connection;
+
+                // Without the name the connection string read "wrappedProvider=;..." and could not be parsed back,
+                // and the provider manifest token named no provider.
+                wrapper.wrappedProviderInvariantName = providerInvariantName;
                 connection = connectionWrapper;
+                providerInvariantName = invariantName;
             }
 
             return connection;
@@ -256,7 +268,10 @@ namespace EFProviderWrapperToolkit
         {
             if (disposing)
             {
-                this.wrappedConnection.Dispose();
+                if (this.wrappedConnection != null)
+                {
+                    this.wrappedConnection.Dispose();
+                }
             }
 
             base.Dispose(disposing);

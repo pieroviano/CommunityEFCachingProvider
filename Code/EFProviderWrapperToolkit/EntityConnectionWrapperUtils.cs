@@ -54,18 +54,23 @@ namespace EFProviderWrapperToolkit
         public static EntityConnection EntityConnectionWithWrappersFromEntityConnectionString(
             EntityConnectionStringBuilder entityConnectionStringBuilder, params string[] wrapperProviders)
         {
-            var connectionString = entityConnectionStringBuilder.ConnectionString;
+            // The workspace's SSDL names the wrapper chain, so the chain is part of the key: keyed on the
+            // connection string alone, a second chain over the same model was handed the first chain's provider.
+            var memoizerKey = entityConnectionStringBuilder.ConnectionString + "|" + string.Join(";", wrapperProviders);
             MetadataWorkspace workspace;
-            if (!metadataWorkspaceMemoizer.TryGetValue(connectionString, out workspace))
+            lock (metadataWorkspaceMemoizer)
             {
-                workspace = CreateWrappedMetadataWorkspace(entityConnectionStringBuilder.Metadata, wrapperProviders);
-                metadataWorkspaceMemoizer.Add(connectionString, workspace);
+                if (!metadataWorkspaceMemoizer.TryGetValue(memoizerKey, out workspace))
+                {
+                    workspace = CreateWrappedMetadataWorkspace(entityConnectionStringBuilder.Metadata, wrapperProviders);
+                    metadataWorkspaceMemoizer.Add(memoizerKey, workspace);
+                }
             }
 
             var storeConnection = DbProviderFactories.GetFactory(entityConnectionStringBuilder.Provider).CreateConnection();
             storeConnection.ConnectionString = entityConnectionStringBuilder.ProviderConnectionString;
             var newEntityConnection =
-                new EntityConnection(workspace, DbConnectionWrapper.WrapConnection(storeConnection, wrapperProviders));
+                new EntityConnection(workspace, DbConnectionWrapper.WrapConnection(storeConnection, entityConnectionStringBuilder.Provider, wrapperProviders));
             return newEntityConnection;
         }
 

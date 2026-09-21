@@ -43,6 +43,12 @@ namespace EFCachingProvider.Caching
         /// <param name="maxItems">The maximum number of items which can be stored in the cache.</param>
         public InMemoryCache(int maxItems)
         {
+            // A cache that can hold nothing used to fail with a NullReferenceException on the first PutItem.
+            if (maxItems < 1)
+            {
+                throw new ArgumentOutOfRangeException("maxItems", maxItems, "The cache must be able to hold at least one item.");
+            }
+
             this.MaxItems = maxItems;
             this.GetCurrentDate = () => DateTime.Now;
         }
@@ -188,7 +194,9 @@ namespace EFCachingProvider.Caching
                 Key = key,
                 KeyHashCode = key.GetHashCode(),
                 Value = value,
-                DependentEntitySets = dependentEntitySets,
+
+                // Snapshot: the caller may change its list later, and invalidation must see what was registered.
+                DependentEntitySets = dependentEntitySets.Distinct().ToArray(),
                 SlidingExpiration = slidingExpiration,
                 ExpirationTime = absoluteExpiration,
             };
@@ -219,7 +227,7 @@ namespace EFCachingProvider.Caching
 
             this.entries.Add(key, newEntry);
 
-            foreach (string entitySet in dependentEntitySets)
+            foreach (string entitySet in newEntry.DependentEntitySets)
             {
                 HashSet<CacheEntry> queriesDependentOnSet;
 

@@ -172,7 +172,10 @@ namespace EFCachingProvider
 
             this.UpdateAffectedEntitySets();
             string cacheKey = this.GetCacheKey();
-            if (cacheKey == null || !this.Definition.IsCacheable() || !this.Connection.CachingPolicy.CanBeCached(this.Definition))
+
+            // After a write, the transaction must see its own uncommitted changes, and whatever it reads must not
+            // outlive a rollback: bypass the cache in both directions.
+            if (cacheKey == null || this.IsInModifyingTransaction() || !this.Definition.IsCacheable() || !this.Connection.CachingPolicy.CanBeCached(this.Definition))
             {
                 // non-cacheable
                 Interlocked.Increment(ref nonCacheableCommands);
@@ -220,16 +223,54 @@ namespace EFCachingProvider
             }
         }
 
-        private static string GetLiteralValue(object value)
+        /// <summary>
+        /// Encodes a parameter value so that distinct values never produce the same text: the type is part of
+        /// it, strings are length-prefixed, and values whose default formatting loses information (binary,
+        /// dates, floating point) use a lossless form.
+        /// </summary>
+        private static string GetKeyValue(object value)
         {
+            if (value == null)
+            {
+                return "null";
+            }
+
+            if (value is DBNull)
+            {
+                return "dbnull";
+            }
+
+            string text;
             if (value is string)
             {
-                return "'" + value.ToString().Replace("'", "''") + "'";
+                text = (string)value;
+            }
+            else if (value is byte[])
+            {
+                text = Convert.ToBase64String((byte[])value);
+            }
+            else if (value is DateTime)
+            {
+                text = ((DateTime)value).ToString("o", CultureInfo.InvariantCulture);
+            }
+            else if (value is DateTimeOffset)
+            {
+                text = ((DateTimeOffset)value).ToString("o", CultureInfo.InvariantCulture);
+            }
+            else if (value is double)
+            {
+                text = ((double)value).ToString("R", CultureInfo.InvariantCulture);
+            }
+            else if (value is float)
+            {
+                text = ((float)value).ToString("R", CultureInfo.InvariantCulture);
             }
             else
             {
-                return Convert.ToString(value, CultureInfo.InvariantCulture);
+                text = Convert.ToString(value, CultureInfo.InvariantCulture);
             }
+
+            return value.GetType().FullName + ":" + text.Length.ToString(CultureInfo.InvariantCulture) + ":" + text;
         }
 
         private string GetCacheKey()
@@ -247,7 +288,12 @@ namespace EFCachingProvider
                     return null;
                 }
 
-                sb = sb.Replace("@" + parameter.ParameterName, GetLiteralValue(parameter.Value));
+                // Appended, not substituted into the text: replacing "@p1" also rewrote "@p10", and a name given
+                // as "@p0" was never found, so queries differing only in those values shared a cache entry.
+                sb.Append('|');
+                sb.Append(parameter.ParameterName);
+                sb.Append('=');
+                sb.Append(GetKeyValue(parameter.Value));
             }
 
 #if HASH_COMMANDS
@@ -258,6 +304,17 @@ namespace EFCachingProvider
 #else
             return sb.ToString();
 #endif
+        }
+
+        private bool IsInModifyingTransaction()
+        {
+            if (this.transaction != null)
+            {
+                return this.transaction.HasModifications;
+            }
+
+            EFCachingEnlistment enlistment = this.Connection.Enlistment;
+            return enlistment != null && enlistment.HasModifications;
         }
 
         private void UpdateAffectedEntitySets()

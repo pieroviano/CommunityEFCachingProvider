@@ -26,10 +26,6 @@ namespace EFCachingProvider
         /// <returns>
         /// The number of columns in the current row.
         /// </returns>
-        public override int FieldCount
-        {
-            get { return this.values.Length; }
-        }
 
         /// <summary>
         /// Gets the value of a column with the specified name.
@@ -82,7 +78,8 @@ namespace EFCachingProvider
         /// <returns>The actual number of bytes read.</returns>
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
-            return (long)this.GetValue(ordinal);
+            // Used to cast the byte[] itself to long. IDataRecord contract: copy a slice, or report the length.
+            return CopySlice((byte[])this.GetValue(ordinal), dataOffset, buffer, bufferOffset, length);
         }
 
         /// <summary>
@@ -106,7 +103,9 @@ namespace EFCachingProvider
         /// <returns>The actual number of characters read.</returns>
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
-            throw new NotSupportedException();
+            object value = this.GetValue(ordinal);
+            char[] chars = value as char[] ?? ((string)value).ToCharArray();
+            return CopySlice(chars, dataOffset, buffer, bufferOffset, length);
         }
 
         /// <summary>
@@ -229,8 +228,10 @@ namespace EFCachingProvider
         /// </returns>
         public override int GetValues(object[] result)
         {
-            Array.Copy(this.values, result, this.values.Length);
-            return this.values.Length;
+            // Copies as many values as fit, like every ADO.NET reader; a shorter buffer used to throw.
+            int count = Math.Min(result.Length, this.values.Length);
+            Array.Copy(this.values, result, count);
+            return count;
         }
 
         /// <summary>
@@ -252,6 +253,23 @@ namespace EFCachingProvider
         protected void SetValues(object[] rowValues)
         {
             this.values = rowValues;
+        }
+
+        private static long CopySlice<T>(T[] source, long dataOffset, T[] buffer, int bufferOffset, int length)
+        {
+            if (buffer == null)
+            {
+                return source.Length;
+            }
+
+            if (dataOffset >= source.Length)
+            {
+                return 0;
+            }
+
+            int count = (int)Math.Min(length, source.Length - dataOffset);
+            Array.Copy(source, dataOffset, buffer, bufferOffset, count);
+            return count;
         }
     }
 }

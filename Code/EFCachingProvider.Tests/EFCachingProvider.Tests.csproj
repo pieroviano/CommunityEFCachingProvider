@@ -15,7 +15,16 @@
   </PropertyGroup>
   <Import Project="..\Common.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\EFProviderWrapperToolkit\EFProviderWrapperToolkit.csproj" />
+    <ProjectReference Include="..\EFTracingProvider\EFTracingProvider.csproj" />
+    <ProjectReference Include="..\EFCachingProvider.Web\EFCachingProvider.Web.csproj" />
     <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />

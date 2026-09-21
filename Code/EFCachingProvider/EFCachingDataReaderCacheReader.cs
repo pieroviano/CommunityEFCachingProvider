@@ -53,9 +53,15 @@ namespace EFCachingProvider
         /// <returns>
         /// The depth of nesting for the current row.
         /// </returns>
+        public override int FieldCount
+        {
+            get { return this.queryResults.ColumnNames.Count; }
+        }
+
         public override int Depth
         {
-            get { throw new NotImplementedException(); }
+            // A cached result is always a top-level SELECT.
+            get { return 0; }
         }
 
         /// <summary>
@@ -67,7 +73,7 @@ namespace EFCachingProvider
         /// </returns>
         public override int RecordsAffected
         {
-            get { throw new NotImplementedException(); }
+            get { return -1; }
         }
 
         /// <summary>
@@ -112,7 +118,25 @@ namespace EFCachingProvider
         /// </exception>
         public override int GetOrdinal(string name)
         {
-            throw new NotImplementedException();
+            // Same rule as the ADO.NET readers: case-sensitive match first, then case-insensitive.
+            int ordinal = this.queryResults.ColumnNames.IndexOf(name);
+            if (ordinal < 0)
+            {
+                for (int i = 0; i < this.queryResults.ColumnNames.Count && ordinal < 0; ++i)
+                {
+                    if (string.Equals(this.queryResults.ColumnNames[i], name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        ordinal = i;
+                    }
+                }
+            }
+
+            if (ordinal < 0)
+            {
+                throw new IndexOutOfRangeException(name);
+            }
+
+            return ordinal;
         }
 
         /// <summary>

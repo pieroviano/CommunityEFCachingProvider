@@ -24,11 +24,13 @@ namespace EFCachingProvider
 				Cache.InvalidateSets(this.affectedEntitySets.Select(c => c.Name));
 			}
 
+			this.IsCompleted = true;
 			enlistment.Done();
 		}
 
 		public void InDoubt(Enlistment enlistment)
 		{
+			this.IsCompleted = true;
 			enlistment.Done();
 		}
 
@@ -39,6 +41,7 @@ namespace EFCachingProvider
 
 		public void Rollback(Enlistment enlistment)
 		{
+			this.IsCompleted = true;
 			enlistment.Done();
 		}
 
@@ -48,6 +51,9 @@ namespace EFCachingProvider
 		}
 
 		public bool HasModifications { get; set; }
+
+		/// <summary>Set once the transaction has committed, rolled back or gone in doubt.</summary>
+		internal bool IsCompleted { get; private set; }
 
 		public ICache Cache { get; set; }
 	}

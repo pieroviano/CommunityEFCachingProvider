@@ -77,16 +77,44 @@ namespace EFCachingProvider
             return new EFCachingTransaction(WrappedConnection.BeginTransaction(isolationLevel), this);
         }
 
-		internal EFCachingEnlistment Enlistment { get; set; }
+		private EFCachingEnlistment enlistment;
+
+		/// <summary>
+		/// The enlistment in the ambient transaction, or null once that transaction has completed - a finished
+		/// enlistment would otherwise keep collecting modifications that nothing will ever invalidate.
+		/// </summary>
+		internal EFCachingEnlistment Enlistment
+		{
+			get { return this.enlistment != null && !this.enlistment.IsCompleted ? this.enlistment : null; }
+		}
 
 		public override void Open()
 		{
 			base.Open();
 			if (System.Transactions.Transaction.Current != null)
 			{
-				this.Enlistment = new EFCachingEnlistment { Cache = this.Cache, HasModifications = false };
-				System.Transactions.Transaction.Current.EnlistVolatile(this.Enlistment, EnlistmentOptions.None);
+				this.Enlist(System.Transactions.Transaction.Current);
 			}
+		}
+
+		/// <summary>
+		/// Enlists in the specified transaction. EntityConnection calls this, not Open, for a store connection
+		/// that is already open when a TransactionScope starts, so it must enlist the cache too.
+		/// </summary>
+		/// <param name="transaction">A reference to an existing transaction in which to enlist.</param>
+		public override void EnlistTransaction(System.Transactions.Transaction transaction)
+		{
+			base.EnlistTransaction(transaction);
+			if (transaction != null)
+			{
+				this.Enlist(transaction);
+			}
+		}
+
+		private void Enlist(System.Transactions.Transaction transaction)
+		{
+			this.enlistment = new EFCachingEnlistment { Cache = this.Cache, HasModifications = false };
+			transaction.EnlistVolatile(this.enlistment, EnlistmentOptions.None);
 		}
     }
 }

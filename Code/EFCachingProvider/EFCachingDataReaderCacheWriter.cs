@@ -46,6 +46,11 @@ namespace EFCachingProvider
             get { return this.wrappedReader.HasRows; }
         }
 
+        public override int FieldCount
+        {
+            get { return this.wrappedReader.FieldCount; }
+        }
+
         /// <summary>
         /// Gets the number of rows changed, inserted, or deleted by execution of the SQL statement.
         /// </summary>
@@ -159,11 +164,29 @@ namespace EFCachingProvider
         /// </summary>
         public override void Close()
         {
+            // A consumer may stop before the end (First(), a broken foreach). Caching what it happened to read
+            // would serve a truncated result later, so read the rest first - the store reader drains it on
+            // Close anyway - and cache only a complete, single result set.
+            if (this.queryResults != null && !this.wrappedReader.IsClosed)
+            {
+                while (this.queryResults != null && this.Read())
+                {
+                }
+
+                if (this.queryResults != null && this.wrappedReader.NextResult())
+                {
+                    this.queryResults = null;
+                }
+            }
+
             this.wrappedReader.Close();
 
-            if (this.queryResults != null)
+            // Cleared once handed over, so a second Close (or Close then Dispose) does not cache it again.
+            DbQueryResults results = this.queryResults;
+            this.queryResults = null;
+            if (results != null)
             {
-                this.addToCache(this.queryResults);
+                this.addToCache(results);
             }
         }
 
