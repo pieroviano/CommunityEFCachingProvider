@@ -1,13 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-  </PropertyGroup>
-<PropertyGroup><Version>$(VersionPrefix).$(VersionSuffix)</Version></PropertyGroup>
-  <PropertyGroup>
+    <Version>$(VersionPrefix).$(VersionSuffix)</Version>
     <PackageOutputPath>$(SolutionDir)Packages\</PackageOutputPath>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetFrameworks>net35;net40</TargetFrameworks>
+    <TargetFrameworks>net48</TargetFrameworks>
     <IncludeSymbols Condition="'$(Configuration)'=='Debug'">true</IncludeSymbols>
     <SymbolPackageFormat Condition="'$(Configuration)'=='Debug'">snupkg</SymbolPackageFormat>
     <IncludeSymbols Condition="'$(Configuration)'!='Debug'">false</IncludeSymbols>
@@ -15,21 +11,16 @@
     <Company>Microsoft</Company>
     <Product>EFCachingProvider.Tests</Product>
     <Copyright>Copyright (c) Microsoft Corporation</Copyright>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
-  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" />
-  <Import Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" />
   <Import Project="..\Common.targets" />
   <ItemGroup>
-    <PackageReference Include="Net4x.NunitTests" Version="$(Net4xMsTestsVersion).$(VersionBuildSuffix)" />
+    <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EFCachingProvider\EFCachingProvider.csproj" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
   </ItemGroup>
 </Project>
