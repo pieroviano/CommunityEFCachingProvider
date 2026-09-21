@@ -16,9 +16,11 @@
         <Version>$(VersionPrefix).$(VersionSuffix)</Version>
         <PackageId>Net4x.$(AssemblyName)</PackageId>
         <DontConvert>True</DontConvert>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\obfuscatorutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
+    <ItemGroup>
+        <None Include="README.md" Link="README.md" Pack="true" PackagePath="\README.md" />
+    </ItemGroup>
     <ItemGroup>
         <Content Include="Net4x.$(MSBuildProjectName).props" Condition="Exists('Net4x.$(MSBuildProjectName).props')" Pack="True" PackagePath="build\" />
         <Content Include="Net4x.$(MSBuildProjectName).targets" Condition="Exists('Net4x.$(MSBuildProjectName).targets')" Pack="True" PackagePath="build\" />

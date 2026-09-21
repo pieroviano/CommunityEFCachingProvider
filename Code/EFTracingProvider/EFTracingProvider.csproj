@@ -16,9 +16,11 @@
         <Company>Microsoft Corporation</Company>
         <Authors>Microsoft Corporation</Authors>
         <PackageId>Net4x.$(AssemblyName)</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
+    <ItemGroup>
+        <None Include="README.md" Link="README.md" Pack="true" PackagePath="\README.md" />
+    </ItemGroup>
     <ItemGroup>
         <InternalsVisibleTo Include="EFCachingProvider.Tests" Key="002400000480000094000000060200000024000052534131000400000100010061573290409c1b42e87eb3b29b9f684521f750e2ebbce5bb78f86466affc680845f1afe4fe27af50c143373108a6e207ba2ca170bf28fcaff688229b10c65421d1f59528fbc0b62cfc87709a85c167ca1b2ce0f98e45f62f446af7d7ad1fef13f4689ac96695aff5d2be21019af93a7e68370f08e1391d14a2bc26e6f1e08e91" />
     </ItemGroup>

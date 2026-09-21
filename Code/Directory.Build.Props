@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <Import Project="Directory.NuGet.props" Condition="'$(DirectoryNuGet)'==''" />
-  <PropertyGroup>
-    <VersionPrefix>$(EFProviderWrappersVersion)</VersionPrefix>
-    <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
-    <VersionSuffix Condition="'$(Configuration)'!='Release'">0-at20230518035435</VersionSuffix>
-    <VersionSuffix Condition="'$(Configuration)'=='Release'">0</VersionSuffix>
-  </PropertyGroup>
+    <Import Project="Directory.NuGet.props" Condition="'$(DirectoryNuGet)'==''" />
+    <PropertyGroup>
+        <VersionPrefix>$(EFProviderWrappersVersion)</VersionPrefix>
+        <SolutionDir Condition="'$(SolutionDir)'==''">$(MSBuildThisFileDirectory)</SolutionDir>
+        <VersionSuffix>$([System.DateTime]::Now.ToString("yy"))$([System.DateTime]::Now.DayOfYear.ToString("000"))</VersionSuffix>
+    </PropertyGroup>
 </Project>

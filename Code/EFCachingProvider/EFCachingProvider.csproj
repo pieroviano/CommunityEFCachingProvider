@@ -14,10 +14,12 @@
         <Product>EFCachingProvider</Product>
         <Copyright>Copyright (c) Microsoft Corporation</Copyright>
         <Authors>Microsoft Corporation</Authors>
-        <PackageId>Net4x.$(AssemblyName)</PackageId>
+        <PackageId>Net4x.EFCachingProvider.Base</PackageId>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
     </PropertyGroup>
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.targets" />
-    <Import Condition="Exists('$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props')" Project="$(UserProfile)\.nuget\packages\net4x.nugetutility\$(NuGetUtilityVersion)\build\NuGet.Utility.props" />
+    <ItemGroup>
+        <None Include="README.md" Link="README.md" Pack="true" PackagePath="\README.md" />
+    </ItemGroup>
     <Import Project="..\Common.targets" />
     <ItemGroup>
         <PackageReference Include="Net4x.NuGetUtility" PrivateAssets="All" Version="$(NuGetUtilityVersion)" />
@@ -31,10 +33,6 @@
         <Reference Include="System.Data.DataSetExtensions" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
         <Reference Include="System.Data.Entity" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
         <Reference Include="System.Transactions" Condition="'$(TargetFramework)'=='net35' or '$(TargetFramework)'=='net40'" />
-    </ItemGroup>
-    <ItemGroup>
-        <Compile Update="EFCachingCommand.cs" />
-        <Compile Update="EFCachingConnection.cs" />
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\EFProviderWrapperToolkit\EFProviderWrapperToolkit.csproj" />
